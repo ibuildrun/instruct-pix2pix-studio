@@ -1,4 +1,4 @@
-name: 🚀 Создание релиза
+name: 🚀 Автоматический релиз
 
 on:
   push:
@@ -17,13 +17,13 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v4
         
-      - name: 📋 Получение информации о теге
+      - name: 📋 Получить информацию о теге
         id: tag_info
         run: |
           echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
           echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
           
-      - name: 📦 Создание архива
+      - name: 📦 Создать архив
         run: |
           mkdir -p release
           zip -r release/instruct-pix2pix-studio-${{ steps.tag_info.outputs.tag }}.zip \
@@ -35,10 +35,9 @@ jobs:
             run.bat \
             README.md \
             LICENSE \
-            outputs/.gitkeep \
-            -x "*.pyc" -x "__pycache__/*"
+            -x "*.pyc" -x "__pycache__/*" -x "*.egg-info/*"
             
-      - name: 🎉 Создание GitHub Release
+      - name: 🎉 Создать GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           name: "🎨 InstructPix2Pix Studio ${{ steps.tag_info.outputs.tag }}"
@@ -61,7 +60,6 @@ jobs:
             - Python 3.10+
             - AMD RX 5000+ или NVIDIA GTX 1060+ (опционально)
             - 16 ГБ RAM
-            - 10 ГБ свободного места
             
             ### 📝 Изменения
             
