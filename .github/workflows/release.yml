@@ -1,0 +1,76 @@
+name: 🚀 Создание релиза
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: 📦 Создание релиза
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 📋 Получение информации о теге
+        id: tag_info
+        run: |
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          
+      - name: 📦 Создание архива
+        run: |
+          mkdir -p release
+          zip -r release/instruct-pix2pix-studio-${{ steps.tag_info.outputs.tag }}.zip \
+            app.py \
+            src/ \
+            requirements.txt \
+            requirements-windows.txt \
+            setup.bat \
+            run.bat \
+            README.md \
+            LICENSE \
+            outputs/.gitkeep \
+            -x "*.pyc" -x "__pycache__/*"
+            
+      - name: 🎉 Создание GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "🎨 InstructPix2Pix Studio ${{ steps.tag_info.outputs.tag }}"
+          body: |
+            ## 🎨 InstructPix2Pix Studio ${{ steps.tag_info.outputs.tag }}
+            
+            **Дата релиза:** ${{ steps.tag_info.outputs.date }}
+            
+            ### 📥 Установка
+            
+            1. Скачай архив ниже
+            2. Распакуй в любую папку
+            3. Запусти `setup.bat` для установки зависимостей
+            4. Запусти `run.bat` для старта приложения
+            5. Открой http://localhost:7860 в браузере
+            
+            ### 💻 Требования
+            
+            - Windows 10/11
+            - Python 3.10+
+            - AMD RX 5000+ или NVIDIA GTX 1060+ (опционально)
+            - 16 ГБ RAM
+            - 10 ГБ свободного места
+            
+            ### 📝 Изменения
+            
+            Смотри [CHANGELOG](https://github.com/randomu3/instruct-pix2pix-studio/commits/${{ steps.tag_info.outputs.tag }})
+            
+          files: |
+            release/instruct-pix2pix-studio-${{ steps.tag_info.outputs.tag }}.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
