@@ -44,7 +44,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/instruct-pix2pix-studio.git
+git clone https://github.com/randomu3/instruct-pix2pix-studio.git
 cd instruct-pix2pix-studio
 
 # Run setup (creates venv and installs dependencies)
